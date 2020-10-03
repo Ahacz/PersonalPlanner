@@ -1,6 +1,6 @@
 #pragma once
 #include <iostream>
-#include <vector>
+#include <list>
 #include "sqlite3.h"
 
 struct myEvent {
@@ -12,16 +12,17 @@ struct myEvent {
 class EventDB
 {
 private:
-	std::vector<myEvent> loadedEvents;
-	myEvent currentEvent;
 	sqlite3* DB;
 public:
-	EventDB() {};
-	~EventDB();		//This destructor gets called only at the end of the program. 
-	EventDB(EventDB const&) = delete;
+	EventDB();
+	~EventDB();
+	EventDB(EventDB const&) = delete;		//Prevent copying EventDB objects.
 	void operator = (EventDB const&) = delete;
-	void loadEvents(std::string&, std::string&, std::vector<myEvent>&);
-	void addEvent();
+	std::list<myEvent> getEvents(std::string&, std::string&);
+	myEvent getSingleEvent(int&);
+	bool addEvent(myEvent&);
+	bool updateEvent(myEvent&);
+	bool deleteEvent(int);
 	bool init(std::string);
 };
 
