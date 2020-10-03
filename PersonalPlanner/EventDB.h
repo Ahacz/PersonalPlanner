@@ -4,7 +4,7 @@
 #include "sqlite3.h"
 
 struct myEvent {
-	int id;
+	__int64 id;
 	std::string date;
 	std::string name;
 	std::string description;
@@ -19,10 +19,10 @@ public:
 	EventDB(EventDB const&) = delete;		//Prevent copying EventDB objects.
 	void operator = (EventDB const&) = delete;
 	std::list<myEvent> getEvents(std::string&, std::string&);
-	myEvent getSingleEvent(int&);
+	myEvent getSingleEvent(__int64&);
 	bool addEvent(myEvent&);
 	bool updateEvent(myEvent&);
-	bool deleteEvent(int);
-	bool init(std::string);
+	bool deleteEvent(__int64&);
+	void init(std::string);
 };
 

@@ -17,10 +17,6 @@ static std::string getDescription();
 int main()
 {
     EventDB handler;
-    if (!handler.init("Events.db")) {
-        cout << "Failed to open database!";
-        return -1;
-    }
     enum ProgramControl { addEvent = '1', viewEvents = '2', viewEventsRange = '3', programExit = 'q' };
     char userChoice;
     do {
@@ -54,7 +50,7 @@ static void addNewEvent(EventDB &handler)
     if (handler.addEvent(toAdd)) {
         cout << "Succesfully added an event.\n";
     }
-    else cout << "Could not add an event\n";
+    else cout << "Could not add an event.\n";
 }
 static void getEvents(EventDB& handler, bool multiple)
 {
