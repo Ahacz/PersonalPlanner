@@ -1,6 +1,6 @@
 ﻿#include <iostream>
-#include <time.h>
 #include <list>
+#include <regex>
 
 #include "EventDB.h"
 
@@ -20,7 +20,7 @@ int main()
     enum ProgramControl { addEvent = '1', viewEvents = '2', viewEventsRange = '3', programExit = 'q' };
     char userChoice;
     do {
-        cout << "Personnal Planner.\n"
+        cout << "Personnal Planner (Date ranges: 1900-2099).\n"
             << "1 - Add an event for a date | View events for a certain day | 3 - View and edit events for a range of dates | q - Exit: ";
         cin.get(userChoice);
         switch (userChoice) {
@@ -98,7 +98,8 @@ static std::string getDescription()
 }
 static bool isValidDate(std::string toVerify)
 {
-    if (toVerify.length() != 11) {  //Any string of different length is not the desired format.
+    std::regex checkranges("^(19|20)\d\d-(0[1-9]|1[012])-(0[1-9]|[12][0-9]|3[01])$"); //This regular expression checks if dates are from 1900-2099
+    if (!std::regex_match(toVerify, checkranges))                                     //However, date such as 1998-02-31 is still allowed.
         return false;
-    }
+
 }
