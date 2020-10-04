@@ -20,12 +20,12 @@ void deleteEvent(EventDB&);
 int main()
 {
     EventDB handler;
-    enum ProgramControl { addEvent = '1', viewEvents = '2', viewEventsRange = '3', deleteEvent = '4', programExit = 'q' };
+    enum ProgramControl { addEvent = '1', viewEvents = '2', viewEventsRange = '3', removeEvent = '4', programExit = 'q' };
     char userChoice;
     do {
         cout << "Personnal Planner (Date ranges: 1900-2099).\n"
             << "1 - Add an event for a date | 2 - View events for a certain day | 3 - View events for a range of dates | 4 - Delete a record by ID | q - Exit: ";
-        cin.get(userChoice);
+        cin>>userChoice;
         switch (userChoice) {
         case addEvent:
             addNewEvent(handler);
@@ -36,8 +36,9 @@ int main()
         case viewEventsRange:
             getEvents(handler, true);
             break;
-        case deleteEvent:
-            
+        case removeEvent:
+            deleteEvent(handler);
+            break;
         default: break;
         }
     } while (userChoice != programExit);
@@ -71,18 +72,27 @@ static void getEvents(EventDB& handler, bool multiple)
 		dateTo = dateFrom;
 	}
     eventList = handler.getEvents(dateFrom, dateTo);
-    for (auto i : eventList){
-        displayEvent(i);
+    if (eventList.size()) {
+        for (auto i : eventList) {
+            displayEvent(i);
+        }
+    }
+    else {
+        cout << "No results found. \n";
+        return;
     }
     cout << "Please enter ID do view detailed information: ";
     int inputId;
+    cin >> inputId;
     myEvent selectedEvent;
     for (auto i : eventList) {
         if (i.id == inputId){
             selectedEvent = i;
         }
     }
-    displayEvent(selectedEvent, true);
+    if (selectedEvent.id != 0)
+        displayEvent(selectedEvent, true);
+    else cout << "Could not find a record with specified ID.\n";
 }
 static std::string getDate()    //Makes sure to pass a valid date in a string format.
 {
