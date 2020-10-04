@@ -3,11 +3,11 @@
 
 using std::string;
 
+int callbackResults(void*, int, char**, char**);
 EventDB::EventDB() 
 {
     init("Events.db");
     resultList.clear();
-    lstptr = &resultList;
 }
 EventDB::~EventDB() 
 {
@@ -47,20 +47,22 @@ bool EventDB::addEvent(myEvent& toAdd)
     if (exit != SQLITE_OK) {
         std::cerr << "Error Insert" << std::endl;
         sqlite3_free(messageError);
+        return false;
     }
+    return true;
 }
 bool EventDB::updateEvent(myEvent& toUpdate)
 {
-
+    return true;
 }
 
-myEvent EventDB::getSingleEvent(int& id)
+void EventDB::getSingleEvent(int& id)
 {
     resultList.clear();         //Empty the list before filling it.
     int exit;
     char* messageError;
     string sql("SELECT FROM events WHERE ID = "+std::to_string(id)+";");    //this string gets a row by id.
-    exit = sqlite3_exec(DB, sql.c_str(), callbackResults, (void*)lstptr, &messageError);
+    exit = sqlite3_exec(DB, sql.c_str(), callbackResults, (void*)&resultList, &messageError);
     if (exit != SQLITE_OK) {
         std::cerr << "Error Select" << std::endl;
         sqlite3_free(messageError);
@@ -72,12 +74,13 @@ std::list<myEvent> EventDB::getEvents(string& from, string& to)
     resultList.clear();         //Empty the list before filling it.
     int exit;
     char* messageError;
-    string sql("SELECT FROM events WHERE date BETWEEN '"+from+"' AND '"+to+"';");    //gets dates. Date string are stored according to ISO-8601 format
-    exit = sqlite3_exec(DB, sql.c_str(), callbackResults, (void*)lstptr, &messageError);
+    string sql("SELECT FROM events WHERE date BETWEEN '"+from+"' AND '"+to+"';");    //gets dates. Date strings are stored according to ISO-8601 format
+    exit = sqlite3_exec(DB, sql.c_str(), callbackResults, (void*)&resultList, &messageError);
     if (exit != SQLITE_OK) {
         std::cerr << "Error Select" << std::endl;
         sqlite3_free(messageError);
     }
+    return resultList;
 }
 
 int callbackResults(void* list, int count, char** fieldValue, char** columnName) 
