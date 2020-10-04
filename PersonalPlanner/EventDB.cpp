@@ -53,22 +53,16 @@ bool EventDB::addEvent(myEvent& toAdd)
 }
 bool EventDB::deleteEvent(int& id)
 {
-
-    return true;
-}
-
-std::list<myEvent>EventDB::getSingleEvent(int& id)
-{
-    resultList.clear();         //Empty the list before filling it.
+    string sql = "DELETE FROM events WHERE ROWID = " + std::to_string(id) + "; ";
     int exit;
     char* messageError;
-    string sql("SELECT FROM events WHERE ID = "+std::to_string(id)+";");    //this string gets a row by id.
-    exit = sqlite3_exec(DB, sql.c_str(), callbackResults, (void*)&resultList, &messageError);
+    exit = sqlite3_exec(DB, sql.c_str(), NULL, 0, &messageError);
     if (exit != SQLITE_OK) {
-        std::cerr << "Error Select" << std::endl;
+        std::cerr << "Error Delete" << std::endl;
         sqlite3_free(messageError);
+        return false;
     }
-    return resultList;
+    return true;
 }
 
 std::list<myEvent> EventDB::getEvents(string& from, string& to)
@@ -76,7 +70,7 @@ std::list<myEvent> EventDB::getEvents(string& from, string& to)
     resultList.clear();         //Empty the list before filling it.
     int exit;
     char* messageError;
-    string sql("SELECT FROM events WHERE date BETWEEN '"+from+"' AND '"+to+"';");    //gets dates. Date strings are stored according to ISO-8601 format
+    string sql("SELECT ROWID,DATE,TITLE,DESCRIPTION FROM events WHERE date BETWEEN '"+from+"' AND '"+to+"';");    
     exit = sqlite3_exec(DB, sql.c_str(), callbackResults, (void*)&resultList, &messageError);
     if (exit != SQLITE_OK) {
         std::cerr << "Error Select" << std::endl;
@@ -88,10 +82,10 @@ std::list<myEvent> EventDB::getEvents(string& from, string& to)
 int callbackResults(void* list, int count, char** fieldValue, char** columnName) 
 {
     myEvent tmp;
-    tmp.id = fieldValue[0] ? std::stoi(fieldValue[0]) : 0;
-    tmp.date = fieldValue[1] ? fieldValue[1] : "0";
-    tmp.name = fieldValue[2] ? fieldValue[2] : "0";
-    tmp.description = fieldValue[3] ? fieldValue[3] : "0";
+    tmp.id = std::stoi(fieldValue[0]?fieldValue[0]:"0");
+    tmp.date = fieldValue[1] ? fieldValue[1] : "NULL";
+    tmp.name = fieldValue[2] ? fieldValue[2] : "NULL";
+    tmp.description = fieldValue[3] ? fieldValue[3] : "NULL";
     static_cast<std::list<myEvent>*>(list)->emplace_back(tmp);
     return 0;
 }
