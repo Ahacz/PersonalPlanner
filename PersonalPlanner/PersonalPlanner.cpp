@@ -73,8 +73,11 @@ static void getEvents(EventDB& handler, bool multiple)
 }
 static std::string getDate()    //Makes sure to pass a valid date in a string format.
 {
-    cout << "Please provide a date in YYYY-MM-DD format: ";
-
+    std::string input;
+    cin >> input;
+    while (!isValidDate(input)) {
+        cout << "Please provide a date in YYYY-MM-DD format: ";
+    }
 }
 static std::string getName()
 {
@@ -92,4 +95,10 @@ static std::string getDescription()
         cin >> line;
     }
     return desc.substr(0, desc.size() - 1); //remove the last newline sign
+}
+static bool isValidDate(std::string toVerify)
+{
+    if (toVerify.length() != 11) {  //Any string of different length is not the desired format.
+        return false;
+    }
 }

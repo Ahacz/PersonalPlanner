@@ -13,16 +13,19 @@ class EventDB
 {
 private:
 	sqlite3* DB;
+	std::list<myEvent>resultList;
+	std::list<myEvent>* lstptr;
 public:
+	
 	EventDB();
 	~EventDB();
 	EventDB(EventDB const&) = delete;		//Prevent copying EventDB objects.
 	void operator = (EventDB const&) = delete;
 	std::list<myEvent> getEvents(std::string&, std::string&);
-	myEvent getSingleEvent(__int64&);
+	myEvent getSingleEvent(int&);
 	bool addEvent(myEvent&);
 	bool updateEvent(myEvent&);
-	bool deleteEvent(__int64&);
+	bool deleteEvent(int&);
 	void init(std::string);
 };
 
