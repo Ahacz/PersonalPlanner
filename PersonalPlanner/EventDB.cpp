@@ -51,12 +51,13 @@ bool EventDB::addEvent(myEvent& toAdd)
     }
     return true;
 }
-bool EventDB::updateEvent(myEvent& toUpdate)
+bool EventDB::deleteEvent(int& id)
 {
+
     return true;
 }
 
-void EventDB::getSingleEvent(int& id)
+std::list<myEvent>EventDB::getSingleEvent(int& id)
 {
     resultList.clear();         //Empty the list before filling it.
     int exit;
@@ -67,6 +68,7 @@ void EventDB::getSingleEvent(int& id)
         std::cerr << "Error Select" << std::endl;
         sqlite3_free(messageError);
     }
+    return resultList;
 }
 
 std::list<myEvent> EventDB::getEvents(string& from, string& to)

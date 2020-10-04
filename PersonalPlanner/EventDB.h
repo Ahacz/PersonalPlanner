@@ -21,10 +21,9 @@ public:
 	EventDB(EventDB const&) = delete;		//Prevent copying EventDB objects.
 	void operator = (EventDB const&) = delete;
 	std::list<myEvent> getEvents(std::string&, std::string&);
-	void getSingleEvent(int&);
+	std::list<myEvent> getSingleEvent(int&);
 	bool addEvent(myEvent&);
-	bool updateEvent(myEvent&);
-	//bool deleteEvent(int&);
+	bool deleteEvent(int& id);
 	void init(std::string);
 };
 

@@ -8,21 +8,23 @@ using std::cin;
 using std::cout;
 using std::endl;
 
-static void addNewEvent(EventDB & handler);
-static void getEvents(EventDB& handler, bool multiple=false);
+static void addNewEvent(EventDB&);
+static void getEvents(EventDB&, bool =false);
 static std::string getDate();
 static std::string getName();
 static std::string getDescription();
 static bool isValidDate(std::string);
+void displayEvent(myEvent toDisplay, bool = false);
+void deleteEvent(EventDB&);
 
 int main()
 {
     EventDB handler;
-    enum ProgramControl { addEvent = '1', viewEvents = '2', viewEventsRange = '3', programExit = 'q' };
+    enum ProgramControl { addEvent = '1', viewEvents = '2', viewEventsRange = '3', deleteEvent = '4', programExit = 'q' };
     char userChoice;
     do {
         cout << "Personnal Planner (Date ranges: 1900-2099).\n"
-            << "1 - Add an event for a date | View events for a certain day | 3 - View and edit events for a range of dates | q - Exit: ";
+            << "1 - Add an event for a date | 2 - View events for a certain day | 3 - View events for a range of dates | 4 - Delete a record by ID | q - Exit: ";
         cin.get(userChoice);
         switch (userChoice) {
         case addEvent:
@@ -34,6 +36,8 @@ int main()
         case viewEventsRange:
             getEvents(handler, true);
             break;
+        case deleteEvent:
+            
         default: break;
         }
     } while (userChoice != programExit);
@@ -56,21 +60,29 @@ static void addNewEvent(EventDB &handler)
 static void getEvents(EventDB& handler, bool multiple)
 {
     std::list<myEvent> eventList;
-	cout << "Please enter the beginning date in YYYY-MM-DD format: ";
+	cout << "Starting Date. ";
 	std::string dateFrom = getDate();
     std::string dateTo;
 	if (multiple) {
-		cout << "Please enter the ending date in YYYY-MM-DD format: ";
+		cout << "Ending Date. ";
 		dateTo = getDate();
 	}
 	else {
 		dateTo = dateFrom;
 	}
-    /////////////////////////////////////////////////////todo
-    //After getting and displaying the list:
-    cout << "Please enter ";
-    char choice;
-    enum RecordControl { viewDetails = '1', viewEvents = '2', programExit = 'q' };
+    eventList = handler.getEvents(dateFrom, dateTo);
+    for (auto i : eventList){
+        displayEvent(i);
+    }
+    cout << "Please enter ID do view detailed information: ";
+    int inputId;
+    myEvent selectedEvent;
+    for (auto i : eventList) {
+        if (i.id == inputId){
+            selectedEvent = i;
+        }
+    }
+    displayEvent(selectedEvent, true);
 }
 static std::string getDate()    //Makes sure to pass a valid date in a string format.
 {
@@ -123,4 +135,22 @@ static bool isValidDate(std::string toVerify)
     if ((month == 2) && (day == 29) && (year % 100 == 0))
         return false;
     return true;
+}
+void displayEvent(myEvent toDisplay, bool detailed)
+{
+    cout << "ID: " << toDisplay.id
+        << " | Date: " << toDisplay.date
+        << " | Title: " << toDisplay.name << '\n';
+    if (detailed)
+        cout << "Description:\n" << toDisplay.description << '\n';
+}
+void deleteEvent(EventDB& handler)
+{
+    int id;
+    cout << "Please enter an ID of event: ";
+    cin >> id;
+    if (handler.deleteEvent(id))
+        cout << "Succesfully deleted an event\n";
+    else
+        cout << "Could not delete event with this ID.\n";
 }
